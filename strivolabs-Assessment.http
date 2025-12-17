@@ -1,0 +1,6 @@
+@strivolabs_Assessment_HostAddress = http://localhost:5298
+
+GET {{strivolabs_Assessment_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
