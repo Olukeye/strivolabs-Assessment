@@ -1,12 +1,27 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.EntityFrameworkCore;
+using strivolabs_Assessment.Data;
+using strivolabs_Assessment.Repositories;
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        ServerVersion.AutoDetect(
+            builder.Configuration.GetConnectionString("DefaultConnection")
+        )
+    ));
+
+//builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+//builder.Services.AddScoped<IServiceTokenRepository, ServiceTokenRepository>();
+//builder.Services.AddScoped<ISubscriberRepository, SubscriberRepository>();
+
+//builder.Services.AddScoped<IAuthService, AuthService>();
+//builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
