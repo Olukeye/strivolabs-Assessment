@@ -7,9 +7,9 @@ namespace strivolabs_Assessment.Entities
         public int Id { get; set; }
 
         public int ServiceId { get; set; }
-        public Service Service { get; set; } = null!;
+        public Service Service { get; set; } 
 
-        public string PhoneNumber { get; set; } = null!;
+        public string PhoneNumber { get; set; }
 
         public SubscriptionStatus Status { get; set; }
 

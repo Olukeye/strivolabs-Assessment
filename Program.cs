@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using strivolabs_Assessment.Data;
-using strivolabs_Assessment.Repositories;
+using strivolabs_Assessment.Middlewares;
+using strivolabs_Assessment.Repository;
+using strivolabs_Assessment.ServiceImplementation;
+using strivolabs_Assessment.ServiceRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -11,12 +14,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         )
     ));
 
-//builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
-//builder.Services.AddScoped<IServiceTokenRepository, ServiceTokenRepository>();
-//builder.Services.AddScoped<ISubscriberRepository, SubscriberRepository>();
+builder.Services.AddControllers();
 
-//builder.Services.AddScoped<IAuthService, AuthService>();
-//builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IServiceTokenRepository, ServiceTokenRepository>();
+builder.Services.AddScoped<ISubscriberRepository, SubscriberRepository>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
 
 builder.Services.AddOpenApi();
 
@@ -25,32 +32,21 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "OpenAPI V1");
+    });
 }
 
-app.UseHttpsRedirection();
+app.UseRouting();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+//app.UseMiddleware<ServiceTokenMiddleware>();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapControllers();
+
+//app.UseHttpsRedirection();
+app.UseAuthentication();
+//app.UseAuthorization();
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
