@@ -1,6 +1,8 @@
 ﻿using strivolabs_Assessment.Entities;
 using strivolabs_Assessment.Enums;
+using strivolabs_Assessment.Exceptions;
 using strivolabs_Assessment.Repository;
+using strivolabs_Assessment.Response;
 
 namespace strivolabs_Assessment.ServiceImplementation
 {
@@ -18,7 +20,7 @@ namespace strivolabs_Assessment.ServiceImplementation
             var subscriber = await _subscriberRepo.Get(serviceId, phoneNumber);
 
             if (subscriber != null && subscriber.Status == SubscriptionStatus.SUBSCRIBED)
-                throw new InvalidOperationException("User already subscribed");
+                throw new ApiGenericException("User already subscribed");
 
             if (subscriber == null)
             {
@@ -31,6 +33,7 @@ namespace strivolabs_Assessment.ServiceImplementation
                 };
 
                 await _subscriberRepo.Add(subscriber);
+
                 return;
             }
 
@@ -42,12 +45,9 @@ namespace strivolabs_Assessment.ServiceImplementation
 
         }
 
-        public async Task Unsubscribe(Service service, string phoneNumber)
+        public async Task Unsubscribe(int serviceId, string phoneNumber)
         {
-            var subscriber = await _subscriberRepo.Get(service.Id, phoneNumber);
-
-            if (subscriber == null || subscriber.Status != SubscriptionStatus.SUBSCRIBED)
-                throw new KeyNotFoundException("User is not subscribed");
+            var subscriber = await _subscriberRepo.Get(serviceId, phoneNumber);
 
             subscriber.Status = SubscriptionStatus.UNSUBSCRIBED;
             subscriber.UnsubscribedAt = DateTime.UtcNow;

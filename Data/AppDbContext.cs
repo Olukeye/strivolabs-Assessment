@@ -10,8 +10,6 @@ public class AppDbContext : DbContext
     }
     public DbSet<Service> Services { get; set; }
     public DbSet<ServiceToken> ServiceTokens { get; set; }
-    //public DbSet<ServiceToken> ServiceTokens => Set<ServiceToken>();
-    //public DbSet<Subscriber> Subscribers => Set<Subscriber>();
     public DbSet<Subscriber> Subscribers { get; set; }
 
     public static class ServiceSeeder

@@ -1,4 +1,4 @@
-﻿namespace strivolabs_Assessment.Controllers
+﻿namespace strivolabs_Assessment.DTOs
 {
     public class SubscriptionRequest
     {

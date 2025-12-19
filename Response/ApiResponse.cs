@@ -3,6 +3,33 @@ using System.Text.Json.Serialization;
 
 namespace strivolabs_Assessment.Response;
 
+
+public class ServiceResponse
+{
+    public int StatusCode { get; set; }
+    public List<string> Messages { get; set; } = [];
+    public object? Data { get; set; } = new();
+}
+
+public class BaseResponse
+{
+    public int StatusCode { get; set; }
+    public bool IsSuccess { get; set; }
+    public List<string> Messages { get; set; } = [];
+    public object? Data { get; set; } = new();
+
+    public BaseResponse(int statusCode, List<string> messages, object? data = null)
+    {
+        StatusCode = statusCode;
+        Messages = messages;
+        Data = data;
+        IsSuccess = statusCode == StatusCodes.Status200OK;
+    }
+    public BaseResponse()
+    {
+
+    }
+}
 public class ApiResponse<TResponse>
 {
     /// <summary>
@@ -86,7 +113,7 @@ public class NameValueRecord
 
 public record FilterParam
 {
-  //  public long MemberId { get; set; }
+    //  public long MemberId { get; set; }
     public int PageSize { get; set; } = 10;
     public int PageNumber { get; set; } = 1;
     public string? SearchText { get; set; }

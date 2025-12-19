@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using strivolabs_Assessment.DTOs;
 using strivolabs_Assessment.Entities;
 using strivolabs_Assessment.Repository;
 
@@ -17,7 +18,7 @@ namespace strivolabs_Assessment.Controllers
             _subscriptionService = subscriptionService;
         }
         [HttpPost("subscribe")]
-        public async Task<IActionResult> Subscribe(SubscriptionRequest request)
+        public async Task<IActionResult> Subscribe([FromBody] SubscriptionRequest request)
         {
             //var service = HttpContext.Items["Service"] as Service;
 
@@ -32,13 +33,12 @@ namespace strivolabs_Assessment.Controllers
         [HttpPost("unsubscribe")]
         public async Task<IActionResult> Unsubscribe([FromBody] SubscriptionRequest request)
         {
-            var service = HttpContext.Items["Service"] as Service;
-            if (service == null)
+            if (request == null)
                 return Unauthorized("Service authentication failed");
 
             try
             {
-                await _subscriptionService.Unsubscribe(service, request.PhoneNumber);
+                await _subscriptionService.Unsubscribe(request.ServiceId, request.PhoneNumber);
                 return Ok("User unsubscribed successfully");
             }
             catch (KeyNotFoundException ex)
@@ -51,5 +51,18 @@ namespace strivolabs_Assessment.Controllers
             }
         }
 
+        [HttpGet("Status")]
+        public async Task<IActionResult> Status([FromQuery] string phoneNumber)
+        {
+            // Service is injected by middleware
+            var service = HttpContext.Items["Service"] as Service;
+
+            if (service == null)
+                return Unauthorized("Service authentication failed");
+
+            var result = await _subscriptionService.GetStatus(service, phoneNumber);
+
+            return Ok(result);
+        }
     }
 }

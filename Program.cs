@@ -1,3 +1,4 @@
+
 using Microsoft.EntityFrameworkCore;
 using strivolabs_Assessment.Data;
 using strivolabs_Assessment.Middlewares;
@@ -41,12 +42,22 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-//app.UseMiddleware<ServiceTokenMiddleware>();
+
+app.UseMiddleware<ServiceTokenMiddleware>();
 
 app.MapControllers();
 
-//app.UseHttpsRedirection();
 app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthorization();
 
 app.Run();
+
+
+
+//app.MapControllers();
+
+////app.UseHttpsRedirection();
+//app.UseAuthentication();
+////app.UseAuthorization();
+
+//app.Run();
